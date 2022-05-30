@@ -1,4 +1,3 @@
-from logging import exception
 import socket
 from urllib.parse import urlparse
 import time
