@@ -1,3 +1,4 @@
+import os
 import socket
 from urllib.parse import urlparse
 import time
@@ -39,6 +40,15 @@ def main():
                     num = 1
                 message = message.replace(
                     "."+i[0]+":*"+i[1], string * num)
+        result_1 = re.findall("\*(.+):\?(.+)", message)
+        if result_1 != []:
+            for i in result_1:
+                filename = i[0]
+                path = i[1]
+                os.chdir(path)
+                with open(filename, "r", encoding="utf-8") as f:
+                    message = message.replace(
+                        "*"+i[0]+":?"+i[1], f.read().lstrip("\n").rstrip("\n"))
     except Exception:
         message = ""
 
@@ -57,13 +67,15 @@ def main():
             s.connect((hostname, port))
             s.sendall(message.encode())
             send_end_time = time.time()
+            # print("第{}次发送成功，时间：{}".format(
+            #     i+1, send_end_time - send_start_time))
             print("第{}次发送成功，时间：{}，内容：{}".format(
-                i+1, send_end_time - send_start_time, "空" if message == "" else message))
+                i+1, send_end_time - send_start_time, message))
             s.shutdown(socket.SHUT_WR)
             s.close()
         except socket.error:
-            print("Connection error")
-            exit(1)
+            print("第{}次发送失败".format(i+1))
+            s.close()
         end_time = time.time()
     print("总共用时: {}".format(end_time - start_time))
 

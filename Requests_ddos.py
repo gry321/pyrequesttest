@@ -40,6 +40,10 @@ def main():
         url_ = html.url
         parser = urlparse(url_)
         netloc = parser.netloc
+        try:
+            ipaddress = socket.gethostbyname(netloc)
+        except socket.gaierror:
+            ipaddress = "???"
         if re.match(".+:.+", netloc) != None:
             a = re.split(":", netloc)
             netloc = a[0]
@@ -66,7 +70,7 @@ def main():
         end = timeit.default_timer()
         n = str(status) + " String：" + s + " Method：" + method + " Encoding：" + encoding + " Title：" + title + \
             " ServerName：" + serverName + " Host：" + \
-            socket.gethostbyname(netloc) + " Port：" + \
+            ipaddress + " Port：" + \
             port + " Time：" + str(end-start)
         print(n)
         #print("[Python-Debug] %s End" % str(num))
