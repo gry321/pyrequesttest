@@ -4,17 +4,18 @@ import sys
 import urllib.parse as up
 import re
 import traceback
+import chardet
 
 
-class UrlIsError(Exception):
-    pass
+def cd(path):
+    if os.path.exists(path):
+        os.chdir(path)
+    else:
+        os.makedirs(path, exist_ok=True)
+        os.chdir(path)
 
 
 url = sys.argv[1]
-if re.match("(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?", url):
-    pass
-else:
-    raise UrlIsError("网址格式不对")
 try:
     filename = sys.argv[2]
 except Exception:
@@ -28,7 +29,7 @@ try:
     speed = sys.argv[3]
     speed = int(speed)
 except Exception:
-    speed = 50
+    speed = 256
 try:
     path = sys.argv[4]
 except Exception:
@@ -47,7 +48,7 @@ def main():
         print("请求错误")
     else:
         echo_num = 0
-        os.chdir(path)
+        cd(path)
         ok = True
         is_open = False
         if filename in os.listdir():
@@ -76,7 +77,7 @@ def main():
                 # print("一共写入%s个字符" % str(echo_num))
                 # print("本次写入{}个字符，一共写入{}个字符".format(str(len(x)), str(echo_num)))
                 # print("本次写入{}个字符，一共写入{}个字符，还差{}个字符结束".format(str(len(x)), str(echo_num), str(num-echo_num)))
-                print("本次写入{}个字符，一共写入{}个字符，还差{}个字符结束， 下载进度：{:.2f}%".format(
+                print("本次写入{}个字符，一共写入{}个字符，还差{}个字符结束， 下载进度：{:.3f}%".format(
                     str(len(x)), str(echo_num), str(num-echo_num), float(echo_num)/float(num)*100))
                 # print("本次写入%s个字符" % str(len(x)))
             except Exception:
